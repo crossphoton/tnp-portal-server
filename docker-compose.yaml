@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  web:
+    ports:
+      - "80:80"
+
+    env_file:
+      - config/.env
+
+    environment:
+      - PORT=80
+      - TNP_PORTAL_DB_URL=postgres://postgres:postgres@database:5432/tnp_portal
+      - TNP_PORTAL_REDIS_URL=redis://:redispassword@redis:6379
+
+    build: .
+
+    depends_on:
+      - database
+      - redis
+
+  database:
+    image: postgres
+
+    environment:
+      - POSTGRES_DB=tnp_portal
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis
+    command: redis-server /etc/redis/redis.conf
+    volumes:
+      - ./redis/redis.conf:/etc/redis/redis.conf
+      - redis_data:/var/lib/redis
+
+volumes:
+  redis_data:
+  postgres_data:

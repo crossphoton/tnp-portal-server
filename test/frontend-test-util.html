@@ -1,0 +1,40 @@
+<html>
+
+<head>
+    <title>Front end TNP testing</title>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+</head>
+
+<body>
+    <div id="recaptcha-container"></div>
+
+    <input type="file" name="file" id="file">
+</body>
+<script type="text/javascript">
+
+    function recaptchaCallback(e) { console.log(e); }
+    const a = () => {
+        grecaptcha.render(
+            document.getElementById("recaptcha-container"),
+            { callback: recaptchaCallback, sitekey: "6LetNrobAAAAAOFmzLxUI5VeoZx_kMHacqkm67LG" });
+    }
+    window.addEventListener("load", a);
+
+    // File Input
+    const toBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+    });
+    let file;
+    var fileContainer = document.getElementById("file");
+    fileContainer.addEventListener("change", async function (e) {
+        file = fileContainer.files[0];
+        const base64 = await toBase64(file);
+        console.log(base64);
+    });
+
+</script>
+
+</html>

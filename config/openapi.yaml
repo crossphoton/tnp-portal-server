@@ -1,0 +1,475 @@
+# This is incomplete
+
+openapi: 3.0.0
+info:
+  title: Portal API
+  description: Portal REST API.
+  version: 0.1.0
+servers:
+  - url: 'http://tnp-iiitr.herokuapp.com'
+security:
+  - bearerAuth: []
+tags:
+  - name: Users
+  - name: Metadata > Company
+  - name: Metadata > Position
+  - name: Manager
+paths:
+  /users/me:
+    get:
+      tags:
+        - Users
+      summary: Check Authorization
+      description: Get currently logged in user.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: Success
+                  value:
+                    username: crossphoton
+                    type: COMPANY
+                    avatar: 'https://avatars0.githubusercontent.com/u/186909'
+                    email: cs19b1013@iiitr.ac.in
+                    emailVerified: true
+                    expiry: 162683681643610800
+                example-1:
+                  summary: No User / Invalid Token
+                  value: null
+  /users/login:
+    post:
+      tags:
+        - Users
+      summary: Login
+      description: Login with username and password.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                description: ''
+                type: object
+                properties:
+                  username:
+                    type: string
+                    minLength: 1
+                  type:
+                    type: string
+                    minLength: 1
+                  avatar:
+                    type: string
+                    minLength: 1
+                  email:
+                    type: string
+                    minLength: 1
+                  emailVerified:
+                    type: boolean
+                  expiry:
+                    type: number
+                  token:
+                    type: string
+                    minLength: 1
+                required:
+                  - username
+                  - type
+                  - avatar
+                  - email
+                  - emailVerified
+                  - expiry
+                  - token
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              description: ''
+              type: object
+              properties:
+                username:
+                  type: string
+                  minLength: 1
+                password:
+                  type: string
+                  minLength: 1
+                g_recaptcha_response:
+                  type: string
+                  minLength: 1
+              required:
+                - username
+                - password
+                # - g_recaptcha
+        description: ''
+  /users/logout:
+    get:
+      tags:
+        - Users
+      summary: Logout
+      responses:
+        '204':
+          description: No Content
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: null
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Bad Request
+  /users/signup:
+    post:
+      tags:
+        - Users
+      summary: Company SignUp
+      description: Sign Up for Companies.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                email: jatinsachdeva@example.com
+                username: jatinsachdeva
+                password: '12345678'
+                type: COMPANY
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                email: cs19b1003@iiitr.ac.in
+                username: jatin
+                type: COMPANY
+                avatar: 'https://avatars0.githubusercontent.com/u/186909'
+                expiry: '162683694148510800'
+                token: 76ea004d-1284-41f6-9f65-a77bd1851398
+                id: cd56e277-aa75-4977-9c45-87ffe7837b11
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                msg: email must be unique
+            text/plain:
+              schema:
+                type: string
+              example: Invalid body data
+  /users/signup/studentwithgoogle:
+    post:
+      tags:
+        - Users
+      summary: SignUp Student
+      description: Sign Up for students using Google Oauth token.
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                access_token: '{{access_token}}'
+                password: rty890rt
+                department: CSE
+                year: 2019
+                phone: '8888888888'
+                address: |-
+                  Address line.
+                  Can be multiline also
+                cgpa: 8.86
+                semTillCGPA: 4
+                resume: 'https://crossphoton.tech/cdn/CV.pdf'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                username: CS19B1003
+                email: cs19b1003@iiitr.ac.in
+                emailVerified: true
+                type: STUDENT
+                avatar: >-
+                  https://lh3.googleusercontent.com/a-/AOh14GjD-BWrvQVWZKQ5N0qjam5FtuDwvZdqjo076a8TF_0=s96-c
+                metaId: f33591da-1481-458b-9bc5-b91ade7eeff5
+                expiry: '162683786754010800'
+                token: 43d9b9c0-73e0-4e7f-ae12-a2cbca8f1548
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid body data
+            application/json:
+              schema:
+                type: object
+              example:
+                msg: Validation isIn on department failed
+        '401':
+          description: Unauthorized
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: Invalid access_token
+  /metadata/company:
+    post:
+      tags:
+        - Metadata > Company
+      summary: Create Company Profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: GOOGLE
+                address: This is Test address
+                phone: '8888888888'
+                website: www.example.com
+                category: IT
+                sector: IT
+                mainPOCName: Mahajan
+                mainPOCPhone: '8888888888'
+                mainPOCEmail: maha@example.com
+                mainPOCPosition: HR
+      responses:
+        '204':
+          description: No Content
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: null
+        '405':
+          description: Method Not Allowed
+          content:
+            application/json:
+              schema:
+                type: object
+              examples:
+                example-0:
+                  summary: Email not verified
+                  value:
+                    msg: Method Not Allowed
+                example-1:
+                  summary: Recreating profile
+                  value:
+                    msg: Method Not Allowed
+    get:
+      tags:
+        - Metadata > Company
+      summary: Get Company Data
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                name: Microsoft
+                address: This is Test address
+                phone: '8888888888'
+                website: www.example.com
+                category: IT
+                sector: IT
+                mainPOCName: Mahajan
+                mainPOCPhone: '8888888888'
+                mainPOCEmail: maha@example.com
+                mainPOCPosition: HR
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                msg: Unauthorized access
+    put:
+      tags:
+        - Metadata > Company
+      summary: Update Company Profile
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                change:
+                  name: Microsoft
+      responses:
+        '204':
+          description: No Content
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                msg: Unauthorized access
+  /metadata/company/poc:
+    get:
+      tags:
+        - Metadata > Company
+      summary: 'Get POC assigned for the company '
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+  /metadata/positions:
+    post:
+      tags:
+        - Metadata > Position
+      summary: Create Position
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                name: SDE
+                description: This is description of the position
+                type: INTERNSHIP
+                status: OPEN
+                minCGPA: '9'
+                pocName: Mahajan
+                pocPhone: '8888888888'
+                pocEmail: POC@example.com
+      responses:
+        '204':
+          description: No Content
+          content:
+            text/plain:
+              schema:
+                type: string
+              example: null
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                msg: Unauthorized access
+    put:
+      tags:
+        - Metadata > Position
+      summary: Update Position
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                positionId: 7ea0f6b4-c41d-4ff7-a4fa-7d3f4c8a5d82
+                change:
+                  minCGPA: '8.5'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+    get:
+      tags:
+        - Metadata > Position
+      summary: Get Positions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                positions:
+                  - id: ab95d08a-2b70-459e-9bb7-2593d77a1bb1
+                    name: SDE
+                    description: test
+                    type: INTERNSHIP
+                    hires: 1
+                    duration: null
+                    location: Remote
+                    salary: null
+                    ppoAvailable: false
+                    status: OPEN
+                    minCGPA: 7
+                    pocName: Mahajan
+                    pocPhone: '8888888888'
+                    pocEmail: POC@example.com
+                  - id: 621d6156-430d-43dc-bf30-0e7a51a7a8de
+                    name: SDE
+                    description: This is description of the position
+                    type: PLACEMENT
+                    hires: 1
+                    duration: null
+                    location: Remote
+                    salary: null
+                    ppoAvailable: false
+                    status: CLOSED
+                    minCGPA: 7
+                    pocName: Mahajan
+                    pocPhone: '8888888888'
+                    pocEmail: POC@example.com
+        '400':
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                type: object
+              example:
+                msg: Unauthorized access
+  /manager/student/enroll:
+    post:
+      tags:
+        - Manager
+      summary: Enroll For Position
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              example:
+                positionId: bdb6b44d-c2f2-4f5f-a0cf-9d8f8133bf18
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: {}
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+  examples:
+    login:
+      summary: Username of user
+      value: CS19B1003

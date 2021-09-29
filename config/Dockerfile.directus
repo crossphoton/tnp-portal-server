@@ -1,0 +1,22 @@
+FROM directus/directus:latest
+
+
+ENV KEY='255d861b-6a78-5996-9aa3-922530ec40b1'
+ENV SECRET='9138487b-cda1-52c2-b5b5-c805a545e263'
+
+ENV DB_CLIENT='pg'
+ENV DB_HOST='127.0.0.1'
+ENV DB_PORT='5432'
+ENV DB_DATABASE='postgres'
+ENV DB_USER='postgres'
+ENV DB_PASSWORD='postgres'
+
+ENV CACHE_ENABLED='true'
+ENV CACHE_STORE='redis'
+ENV CACHE_REDIS='redis://localhost:6379'
+
+ENV ADMIN_EMAIL='admin@example.com'
+ENV ADMIN_PASSWORD='password'
+ENV PORT=8055
+
+EXPOSE $PORT
